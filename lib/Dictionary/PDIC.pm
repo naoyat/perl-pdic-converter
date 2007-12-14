@@ -9,6 +9,8 @@ use Dictionary::PDIC::Version; # major_version
 
 use Dictionary::PDIC::Dump;
 
+use Digest::SHA1  qw(sha1_hex);
+
 ##use utf8;
 #use Encode::BOCU1;
 
@@ -496,7 +498,7 @@ sub fields_in_datablock {
 # render_field(\$field, $output_encoding [,$output_format])
 #
 sub render_field {
-    my ($self,$ref_field,$output_encoding,$output_format) = @_;
+    my ($self,$fh,$ref_field,$output_encoding,$output_format) = @_;
 #    my $is_bocu = $self->is_bocu;
 
     my %field = %{$ref_field};
@@ -522,35 +524,46 @@ sub render_field {
     if ($output_format eq 'PDIC-TEXT') {
         $trans =~ s/\015\n/ \\ /g;
 
-        printf("%s\n", $entry);
+        print $fh "$entry\n";
         if ($example) {
-            printf("%s / %s\n", $trans, $example);
+            print $fh "$trans / $example\n";
         } else {
-            printf("%s\n", $trans);
+            print $fh "$trans\n";
         }
     } elsif ($output_format eq 'PDIC-1LINE') {
         $trans =~ s/\015\n/ \\ /g;
         if ($example) {
-            printf("%s /// %s / %s\n", $entry, $trans, $example);
+            print $fh "$entry /// $trans / $example\n";
         } else {
-            printf("%s /// %s\n", $entry, $trans);
+            print $fh "$entry /// $trans\n";
         }
     } elsif ($output_format eq 'TAB') {
         $trans =~ s/\015\n/ \\ /g;
-        printf("%s\t%s\t%s\n", $entry, $trans, $example);
+        print $fh "$entry\t$trans\t$example\n";
     } elsif ($output_format eq 'CSV') {
 #        $trans =~ s/\015\n/ \\ /g;
         $trans =~ s/"/\\"/g;
-        printf("\"%s\",\"%s\",\"%s\"\n", $entry, $trans, $example);
+        print $fh "\"$entry\",\"$trans\",\"$example\"\n";
+    } elsif ($output_format eq 'Leopard') {
+		my $id = sha1_hex($entry);
+		my $entry_escaped = $entry;
+		$entry_escaped =~ s/"/\&quot;/g;
+		print $fh "<d:entry id=\"$id\" d:title=\"$entry_escaped\">\n";
+		print $fh "\t<d:index d:value=\"$entry_escaped\"/>\n";
+		print $fh "\t<h1><span class='headword'>$entry</span></h1>\n";
+#		print $fh "\t<span d:pr=2>| $pron |</span>\n" if $pron;
+		print $fh "\t<span class='meaning'>$trans</span>\n" if $trans;
+		print $fh "\t<span class='example'>$example</span>\n" if $example;
+		print $fh "</d:entry>\n";
     } else {
         if ($pron) {
-            printf("%s [%s]\n", $entry, $pron);
+            print $fh "$entry [$pron]\n";
         } else {
-            printf("%s\n", $entry);
+            print $fh "$entry\n";
         }
         $trans =~ s/\015\n/\n\t/g;
-        printf("\t%s\n", $trans);
-        printf("\t%s\n", $example);
+        print $fh "\t$trans\n";
+        print $fh "\t$example\n";
     }
 }
 
@@ -559,19 +572,24 @@ sub render_field {
 ##
 sub dump {
     my ($self,$output_encoding,$output_format) = @_;
-    Dictionary::PDIC::Dump::dump($self,$output_encoding,$output_format);
+    Dictionary::PDIC::Dump::dump($self,*STDOUT,$output_encoding,$output_format);
 }
+sub dump_fh {
+    my ($self,$fh,$output_encoding,$output_format) = @_;
+    Dictionary::PDIC::Dump::dump($self,$fh,$output_encoding,$output_format);
+}
+
 sub dump_header {
     my $self = shift;
-    Dictionary::PDIC::Dump::dump_header($self);
+    Dictionary::PDIC::Dump::dump_header($self,*STDOUT);
 }
 sub dump_index {
     my ($self,$output_encoding) = @_;
-    Dictionary::PDIC::Dump::dump_index($self,$output_encoding);
+    Dictionary::PDIC::Dump::dump_index($self,*STDOUT,$output_encoding);
 }
 sub dump_datablock {
     my ($self,$phys,$output_encoding,$output_format) = @_;
-    Dictionary::PDIC::Dump::dump_datablock($self,$phys,$output_encoding,$output_format);
+    Dictionary::PDIC::Dump::dump_datablock($self,*STDOUT,$phys,$output_encoding,$output_format);
 }
 
 1;

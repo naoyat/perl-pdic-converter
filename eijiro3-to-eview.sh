@@ -4,9 +4,10 @@
 #
 DICT_DIR=~/Desktop/PDICViewer1024EE/Dictionaries
 
+mkdir -p converted
 for f in $DICT_DIR/*.DIC ; do
   name=`basename $f | perl -pe 's/\.DIC$//; tr/A-Z/a-z/'`
   echo "[$name]"
-  perl ./pdic-dump.pl $f | sort -f | sed -f ./eview.sed > $name.txt
+  perl ./pdic-to-1line.pl $f sjis | LC_ALL='C' sort -f | sed -f ./eview.sed > converted/$name.eview.txt
 done
 
