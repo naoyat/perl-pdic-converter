@@ -1,0 +1,57 @@
+■これは何？
+　「英辞郎 第三版」（アルク刊）同梱の辞書データを
+　　・PDICバイナリ形式からPDIC１行テキスト形式 (1line)
+　　・「英辞郎ビューア」でも使える形式 (eview)
+　に変換するスクリプトです。
+
+　pdic-conv version 0.1.1 (2007-12-07版) のスクリプトをリネームしてちょっと改変したものです。
+
+　なお、GUIで作業したい向きには拙作DiDi Dictionary Viewer (http://didi.ntzone.info/)をお試し下さい。
+
+■使用条件とか
+　フリーウェアです。無保証です。
+
+　CPANに載せるつもりで作りかけたライブラリを同梱しています。ライセンスはPerlライセンスで。
+
+■とりあえず必要なもの
+　「英辞郎 第三版」（アルク刊）
+
+　※英辞郎のテキストデータが欲しいだけならEDPで最新データをTEXT形式で売ってますのでそちらもご検討ください。
+　http://www.eijiro.jp/
+　その場合このツールは不要です。
+
+■動作環境
+　Mac OS X の「英辞郎 第三版」が動作するバージョンならたぶんOKです。OS X付属のPerlで行けます。
+　※Windows その他の OS で使う場合は eijiro3-to-<format>.sh の DICT_DIR を適宜書き換えて下さい。たぶん動きます。
+
+■使い方
+　（１）「英辞郎 第三版」のインストーラで英辞郎データをインストール
+　　　　デスクトップに PDICViewer1024EE というフォルダができます。
+　（２）このツールをどこかに展開し、eijiro3-to-<format>.sh を走らせる。
+
+　　% ./eijiro3-to-<format>.sh
+　　[eijiro98]
+　　[reiji98]
+　　[ryaku98]
+　　[waeiji98]
+　　%
+
+　（２）ちょっと時間がかかるので休憩。コーヒーをキーボードにこぼさないように。
+　（３）~/converted/ に
+　　　　　eijiro98.<format>.txt
+　　　　　reiji98.<format>.txt
+　　　　　ryaku98.<format>.txt
+　　　　　waeiji98.<format>.txt
+　　　　というファイルができるので、後は煮るなり焼くなり・・・お好きなように。
+
+■履歴
+  version 0.1.1 上記２つをとりまとめ、あとotsuneさんの2007/5/9のパッチを適用
+    < http://subtech.g.hatena.ne.jp/otsune/20070509/EIJIROPDICConverterDiff
+　version 0.1 (2007-02-12版)
+　version 0.1/e (2007-02-22 英辞郎ビューア対応版)
+
+■作者
+　naoya_t (aka. naochan)
+  http://blog.livedoor.jp/naoya_t/ (new)
+　http://d.hatena.ne.jp/NaoyaT/ (old)
+　http://pdicviewer.naochan.com/
